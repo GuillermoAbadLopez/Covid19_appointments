@@ -1,0 +1,205 @@
+<html>
+
+    <head>
+        <title>Covid-19 Vaccination Appointment</title>
+    </head>
+
+    <body>
+
+        <h1>Request a Covid-19 Vaccination Appointment</h1>
+        <h2>Add an appointment</h2>
+        <div class="form-group">
+            <label for="name">Name (mandatory): </label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="age">Age (mandatory): </label>
+            <input type="number" class="form-control" id="age" name="age" min="0" max="999" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number: </label>
+            <input type="tel" class="form-control" id="phone" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label for="vaccine-center">Preferred Vaccination Center: </label>
+            <select class="form-control" id="center" name="center" required>
+                <option value="">Choose a vaccination center
+                </option>
+                <option value="Sant Pau">Sant Pau</option>
+                <option value="Vall Hebron">Vall Hebron</option>
+                <option value="Quiron Dexeus">Quiron Dexeus</option>
+            </select>
+        </div>
+        <div>
+            <label for="date">Preferred Vaccination Date: </label>
+            <input id="date" name="date" type="date" />
+        </div>     
+        
+        <button onclick="addAppointment()"> Submit! </button>
+
+        <h2>List of current appointments</h2>
+        <div id="appointment-list"> </div>
+
+        <script> 
+
+            //////////////////////////////// MODEL ////////////////////////////////
+            
+            let appointments; 
+            // Retrieve localStorage
+            const savedAppointments = JSON.parse(localStorage.getItem('appointments'));
+            // Check if local saved appoint is an array, else create default appointment
+            if (Array.isArray(savedAppointments) && savedAppointments != '' ) {
+                appointments = savedAppointments;
+            } else {
+                appointments = [{
+                    name: 'Guillermo Abad Lopez',
+                    age: '23',
+                    phone: '+34616185317',
+                    center: 'Quiron Dexeus',
+                    date: '2024-01-01',
+                    id: 'id1'
+                }, {
+                    name: 'Marta Tuduri Quevedo',
+                    age: '23',
+                    phone: '+34111111111',
+                    center: 'Vall Hebron',
+                    date: '2024-01-01',
+                    id: 'id2'
+                }];
+            }
+
+            // Create an appointment
+            const createAppointment = (name, age, phone, center, date) => {
+                const id = '' + new Date().getTime();
+
+                appointments.push({
+                    name: name,
+                    age: age,
+                    phone: phone,
+                    center: center,
+                    date: date,
+                    id: id
+                });
+
+                saveAppointments();
+            }
+
+            // Deletes an appointment
+            const removeAppointment = idToDelete => {
+                appointments = appointments.filter(appointment => {
+                    // If the id of this appointment matches idToDelete, return false
+                    // For everything else, return true
+                    if (appointment.id === idToDelete) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+
+                saveAppointments();
+            }
+
+            // Save function
+            const saveAppointments = () => {
+                localStorage.setItem('appointments', JSON.stringify(appointments));
+            }
+
+
+            /////////////////////////////// CONTROLLER ///////////////////////////////
+            
+            const addAppointment = () => {
+                // Get each text from the input boxes into the corresponding constants
+                const textbox1 = document.getElementById('name');
+                const name = textbox1.value;
+
+                const textbox2 = document.getElementById('age');
+                const age = textbox2.value;
+                
+                const textbox3 = document.getElementById('phone');
+                const phone = textbox3.value;
+
+                const textbox4 = document.getElementById('center');
+                let center = textbox4.value;
+
+                const datePicker = document.getElementById('date');
+                let date = datePicker.value;
+
+                // Get today date
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear();
+                today = yyyy + '-' + mm + '-' + dd;
+
+                //Fill blank fields if aplicable 
+                if (date == ''){
+                    if(mm < 12){
+                        date = new Date();
+                        var dd = String(date.getDate()).padStart(2, '0');
+                        var mm = String(date.getMonth() + 2).padStart(2, '0'); //January is 0!
+                        var yyyy = date.getFullYear();
+                        date = yyyy + '-' + mm + '-' + dd;
+                    } else {
+                        yyyy=yyyy+1;
+                        date = yyyy + '-01-' + dd;
+                    }
+                }
+                if (center == ''){
+                    center = 'Sant Pau';
+                }
+                
+                // Check conditions for written fields
+                if (name == '' || age ==''){
+                    alert('Please fill out all required fields.');
+                } else if(age>100 || age <18){
+                    alert('You must be between 18 and 100 years old to receive a vaccine.');
+                } else if ( date < today) {
+                    alert('The selected date must be from today, forward.');
+                } else{
+                    createAppointment(name, age, phone, center, date);
+                    setTimeout(function () {
+                        window.location.replace("https://guillermoabadlopez.github.io/Covid19_only_frontend/confirmation.html");
+                    }, 1000);
+                }
+                render();
+            }
+
+            const deleteAppointment = event => {
+                const deleteButton = event.target;
+                const idToDelete = deleteButton.id;
+
+                removeAppointment(idToDelete);
+                render();
+            }
+
+            //////////////////////////////// VIEW ////////////////////////////////
+            const render = () => {
+                // reset our list
+                document.getElementById('appointment-list').innerHTML = '';
+
+                appointments.forEach(appointment => {
+                    const element = document.createElement('div');
+                    element.innerText = 
+                        appointment.name + ' - ' +
+                        appointment.center + ' - ' +
+                        appointment.date 
+                    ;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerText = 'Delete';
+                    deleteButton.style = 'margin-left: 12px';
+                    deleteButton.onclick = deleteAppointment;
+                    deleteButton.id = appointment.id;
+                    element.appendChild(deleteButton);
+
+                    const appointmentList = document.getElementById('appointment-list');
+                    appointmentList.appendChild(element)
+                });
+            }
+
+            render();
+
+        </script>
+    </body>
+</html>
+
