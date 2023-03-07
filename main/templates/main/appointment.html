@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Appointment
+{% endblock %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <h3>{{ls.center}} - {{ls.date}}</h3>
+        <br>
+        <br>
+        <h5>Personal details:</h5>
+        <p>- Name: {{ls.name}}</p>
+        <p>- Age: {{ls.age}}</p>
+        <p>- Address: {{ls.address}}</p>
+        <p>- Phone: {{ls.phone}}</p>
+        <br>
+        <h5> Details of appointment:</h5>
+        <p>- Center: {{ls.center}}</p>
+        <p>- Date: {{ls.date}}</p>
+        <br>
+        <h5> Confirmation code: {{ls.confirmation_code}}</h5>
+        <br>
+        <br>
+        <br>
+        <br>
+        <p style="font-size:12px;"> Back to appointments <a href="/list">  list </a> </p>
+
+    {% else %}
+        <p>Login <a href="login/">Here</a></p>
+    {% endif %}
+{% endblock %}
+
+user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="appointment", null=True)
+name = models.CharField(max_length=300)
+age = models.PositiveIntegerField()
+address = models.CharField(max_length=300)
+phone = models.CharField(max_length=20)
+center = models.CharField(max_length=50)
+date = models.DateTimeField()
+confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))

@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block title %}
     Create new appointment
 {% endblock %}
@@ -7,15 +9,11 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-        <h3>Create Page</h3>
-        <form method= "post" action="/create/" class = "form-group">
+        <h3>Create a new appointment</h3>
+        <form method= "POST" action="/create/" class = "form">
                 {% csrf_token %}
-                <div class = "input-group mb-3">
-                    <div class="input-group-prepend">
-                        <button type="submit", name="save" class="btn btn-success"> Create New </button>
-                    </div>
-                    {{form.name}}
-                </div>
+                {{ form | crispy }}
+                    <button type="submit", name="save" class="btn btn-success"> Create </button>
         </form>
     {% else %}
         <p style="font-size:12px;"> You are not logged in! <a href="/login">  Log in now! </a> </p>

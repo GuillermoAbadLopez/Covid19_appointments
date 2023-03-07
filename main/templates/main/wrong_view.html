@@ -1,12 +1,14 @@
 {% extends 'main/base.html' %}
 
 {% block title %}
-    View List
+    Wrong view
 {% endblock %}
 
 {% block content %}
-    <p> That list wasn't your, check yours below:</p>
-    {% for td in user.todolist.all %}
-        <p><a href="/{{td.id}}">{{td.name}}</a></p>
+    <p> That appointment isn't yours, check yours below:</p>
+    {% for ap in user.appointment.all %}
+        <p> - {{ap.center}} - {{ap.date}} <a href="/{{ap.id}}">link</a> </p>
     {% endfor %}
+    <br>
+    <p>Or <a href="/login">  log in </a>  now!</p>
 {% endblock %}
