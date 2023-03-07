@@ -51,7 +51,9 @@ def create(response):
                 else:
                     error_message = 'The selected date must be from tomorrow onwards'
                     return render(response, 'main/error.html', {'error_message': error_message})
-
+        else:   
+            error_message = 'Form is invalid, try again'
+            return render(response, 'main/error.html', {'error_message': error_message})
     else:
         form = AppointmentForm()
 

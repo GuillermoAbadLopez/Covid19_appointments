@@ -7,6 +7,9 @@ def register(response):
         form = RegisterForm(response.POST)
         if form.is_valid():
             form.save()
+        else:  
+            error_message = 'Invalid inputs, try again'
+            return render(response, 'main/error.html', {'error_message': error_message})
         
         return redirect("/")
 
