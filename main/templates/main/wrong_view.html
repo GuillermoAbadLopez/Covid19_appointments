@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    <p> That list wasn't your, check yours below:</p>
+    <p> That list isn't yours, check yours below:</p>
     {% for td in user.todolist.all %}
-        <p><a href="/{{td.id}}">{{td.name}}</a></p>
+        <p> - <a href="/{{td.id}}">{{td.name}}</a></p>
     {% endfor %}
     <br>
     <p>Or <a href="/login">  log in </a>  now!</p>
